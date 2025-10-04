@@ -1,31 +1,29 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { useBookings } from "@/contexts/booking-context"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Calendar, Clock, MessageCircle, Star, MapPin, User, CreditCard, X } from "lucide-react"
+import { ChatModal } from "@/components/chat-modal"
 
-interface Booking {
-  id: number
-  service: string
-  provider: string
-  date: string
-  status: "confirmed" | "pending" | "completed"
-  price: string
-  image?: string
-  rating?: number
-  location?: string
-}
+import type { Booking } from "@/contexts/booking-context"
 
 interface BookingCardProps {
   booking: Booking
 }
 
 export function BookingCard({ booking }: BookingCardProps) {
+  const router = useRouter()
+  const { removeBooking, updateBookingStatus } = useBookings()
   const [showPaymentModal, setShowPaymentModal] = useState(false)
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("")
   const [paymentStep, setPaymentStep] = useState(1)
+  const [showChatModal, setShowChatModal] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -38,6 +36,12 @@ export function BookingCard({ booking }: BookingCardProps) {
       default:
         return "bg-gray-100 text-gray-800"
     }
+  }
+
+  const handleDelete = async () => {
+    setIsDeleting(true)
+    await new Promise((resolve) => setTimeout(resolve, 500))
+    removeBooking(booking.id)
   }
 
   const PaymentModal = () => (
@@ -58,7 +62,7 @@ export function BookingCard({ booking }: BookingCardProps) {
           <div className="bg-gray-50 rounded-lg p-4 mb-6">
             <div className="flex items-center space-x-3 mb-3">
               <img
-                src={booking.image || "/placeholder.svg?height=50&width=50"}
+                src={booking.providerPhoto || "/placeholder.svg?height=50&width=50"}
                 alt={booking.provider}
                 className="w-12 h-12 rounded-full object-cover"
               />
@@ -213,9 +217,19 @@ export function BookingCard({ booking }: BookingCardProps) {
                   Back
                 </button>
                 <button
-                  onClick={() => {
+                  onClick={async () => {
                     setShowPaymentModal(false)
-                    // Handle payment processing
+                    setIsProcessing(true)
+
+                    // Simulate payment processing
+                    await new Promise((resolve) => setTimeout(resolve, 2000))
+
+                    // Update booking status to confirmed
+                    updateBookingStatus(booking.id, "confirmed")
+                    setIsProcessing(false)
+
+                    // Show success message or redirect
+                    window.location.reload()
                   }}
                   className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200"
                 >
@@ -240,7 +254,11 @@ export function BookingCard({ booking }: BookingCardProps) {
                 </div>
               </div>
               <button
-                onClick={() => setShowPaymentModal(false)}
+                onClick={async () => {
+                  setShowPaymentModal(false)
+                  updateBookingStatus(booking.id, "confirmed")
+                  window.location.reload()
+                }}
                 className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200"
               >
                 Confirm Booking
@@ -259,7 +277,7 @@ export function BookingCard({ booking }: BookingCardProps) {
           <div className="flex justify-between items-start mb-4">
             <div className="flex items-center space-x-3">
               <img
-                src={booking.image || "/placeholder.svg?height=50&width=50"}
+                src={booking.providerPhoto || "/placeholder.svg?height=50&width=50"}
                 alt={booking.provider}
                 className="w-12 h-12 rounded-full object-cover"
               />
@@ -277,9 +295,19 @@ export function BookingCard({ booking }: BookingCardProps) {
                 )}
               </div>
             </div>
-            <Badge className={getStatusColor(booking.status)}>
-              {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
-            </Badge>
+            <div className="flex items-center gap-2">
+              <Badge className={getStatusColor(booking.status)}>
+                {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+              </Badge>
+              <button
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className="p-1.5 rounded-full hover:bg-red-100 text-red-500 hover:text-red-700 transition-colors disabled:opacity-50"
+                title="Delete booking"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
           <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
@@ -300,7 +328,12 @@ export function BookingCard({ booking }: BookingCardProps) {
           </div>
 
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="flex-1 bg-transparent">
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 bg-transparent"
+              onClick={() => setShowChatModal(true)}
+            >
               <MessageCircle className="w-4 h-4 mr-2" />
               Chat
             </Button>
@@ -312,6 +345,14 @@ export function BookingCard({ booking }: BookingCardProps) {
       </Card>
 
       {showPaymentModal && <PaymentModal />}
+      {showChatModal && (
+        <ChatModal
+          isOpen={showChatModal}
+          onClose={() => setShowChatModal(false)}
+          providerName={booking.provider}
+          providerPhoto={booking.providerPhoto || "/placeholder.svg"}
+        />
+      )}
     </>
   )
 }

@@ -1,6 +1,26 @@
+@import url("https://fonts.cdnfonts.com/css/gilroy-bold");
+@import url("https://fonts.cdnfonts.com/css/agbalumo");
+
+@import "tailwindcss";
+
+@theme {
+  /* Custom colors */
+  --color-prim: #1c1c1c;
+  --color-sec: #2c2c2c;
+  --color-lead: #212121;
+  --color-charcoal: #333333;
+
+  /* Custom fonts */
+  --font-gilroy-md: "Gilroy-Medium", sans-serif;
+  --font-gilroy-bold: "Gilroy-Bold", sans-serif;
+  --font-gilroy: "Gilroy-Regular", sans-serif;
+  --font-agbalumo: "Agbalumo", sans-serif;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@plugin DaisyUI;
 
 @layer base {
   :root {
@@ -125,6 +145,152 @@
   }
 }
 
+/* New Violet Theme Animations */
+@keyframes gradient-shift {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translate(50px, 50px) rotate(180deg);
+    opacity: 0.6;
+  }
+}
+
+@keyframes gradient-shift-reverse {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translate(-50px, -50px) rotate(-180deg);
+    opacity: 0.5;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) translateX(0) scale(1);
+  }
+  33% {
+    transform: translateY(-30px) translateX(20px) scale(1.1);
+  }
+  66% {
+    transform: translateY(20px) translateX(-20px) scale(0.9);
+  }
+}
+
+@keyframes float-delayed {
+  0%,
+  100% {
+    transform: translateY(0) translateX(0) scale(1);
+  }
+  33% {
+    transform: translateY(40px) translateX(-30px) scale(1.15);
+  }
+  66% {
+    transform: translateY(-25px) translateX(25px) scale(0.95);
+  }
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0) translateX(0) scale(1);
+  }
+  50% {
+    transform: translateY(-50px) translateX(30px) scale(1.2);
+  }
+}
+
+@keyframes particle-1 {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(100px, -100px);
+    opacity: 0;
+  }
+}
+
+@keyframes particle-2 {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-120px, 80px);
+    opacity: 0;
+  }
+}
+
+@keyframes particle-3 {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(80px, 100px);
+    opacity: 0;
+  }
+}
+
+@keyframes particle-4 {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-90px, -90px);
+    opacity: 0;
+  }
+}
+
+@keyframes particle-5 {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(110px, -80px);
+    opacity: 0;
+  }
+}
+
 .animate-fade-in-up {
   animation: fade-in-up 0.6s ease-out forwards;
 }
@@ -143,6 +309,46 @@
 
 .animate-pulse-slow {
   animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-gradient-shift {
+  animation: gradient-shift 15s ease-in-out infinite;
+}
+
+.animate-gradient-shift-reverse {
+  animation: gradient-shift-reverse 20s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 8s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float-delayed 10s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: float-slow 12s ease-in-out infinite;
+}
+
+.animate-particle-1 {
+  animation: particle-1 8s ease-in-out infinite;
+}
+
+.animate-particle-2 {
+  animation: particle-2 10s ease-in-out infinite 1s;
+}
+
+.animate-particle-3 {
+  animation: particle-3 9s ease-in-out infinite 2s;
+}
+
+.animate-particle-4 {
+  animation: particle-4 11s ease-in-out infinite 3s;
+}
+
+.animate-particle-5 {
+  animation: particle-5 7s ease-in-out infinite 1.5s;
 }
 
 .animation-delay-200 {
@@ -167,6 +373,21 @@
 
 .animation-delay-4000 {
   animation-delay: 4s;
+}
+
+/* Gradient utilities */
+.bg-gradient-radial {
+  background-image: radial-gradient(circle, var(--tw-gradient-stops));
+}
+
+.bg-radial-gradient {
+  background-image: radial-gradient(circle, var(--tw-gradient-stops));
+}
+
+.bg-grid-pattern {
+  background-image: linear-gradient(to right, rgba(139, 92, 246, 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(139, 92, 246, 0.1) 1px, transparent 1px);
+  background-size: 30px 30px;
 }
 
 /* Smooth scrolling */

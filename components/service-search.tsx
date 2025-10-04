@@ -182,7 +182,8 @@ export function ServiceSearch({
     } else if (query.length === 0 && showPopular) {
       const popular = getPopularServices()
       setSuggestions(popular)
-      setShowSuggestions(true)
+      // Don't automatically show suggestions on page load
+      // Only show when user focuses the input (handled by handleInputFocus)
     } else {
       setSuggestions([])
       setShowSuggestions(false)

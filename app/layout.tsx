@@ -2,6 +2,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
+import { BookingProvider } from "@/contexts/booking-context"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
     ],
   },
   manifest: "/site.webmanifest",
-    generator: 'v0.dev'
+    generator: 'v0.app'
 }
 
 export default function RootLayout({
@@ -39,7 +40,9 @@ export default function RootLayout({
           src="https://backend.omnidim.io/web_widget.js?secret_key=6320c1768a2a6dbdab71b93a0f09d7db"
         />
       </head>
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <BookingProvider>{children}</BookingProvider>
+      </body>
     </html>
   )
 }

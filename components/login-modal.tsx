@@ -11,14 +11,16 @@ import { X, Mail, Eye, EyeOff, CheckCircle, AlertCircle, Loader2, ArrowLeft } fr
 interface LoginModalProps {
   isOpen: boolean
   onClose: () => void
+  onSuccess?: (userData: { username: string; email: string }) => void
 }
 
-type LoginStep = "method" | "email-login" | "forgot-password" | "reset-sent" | "success"
-
-export function LoginModal({ isOpen, onClose }: LoginModalProps) {
-  const [currentStep, setCurrentStep] = useState<LoginStep>("method")
+export function LoginModal({ isOpen, onClose, onSuccess }: LoginModalProps) {
+  const [currentStep, setCurrentStep] = useState<
+    "method" | "email-login" | "forgot-password" | "reset-sent" | "success"
+  >("method")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [username, setUsername] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
@@ -48,8 +50,8 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
     setError("")
 
     // Validation
-    if (!email.trim() || !/\S+@\S+\.\S+/.test(email)) {
-      setError("Please enter a valid email address")
+    if (!username.trim() && !email.trim()) {
+      setError("Please enter a username or email address")
       setIsLoading(false)
       return
     }
@@ -67,6 +69,11 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
       // Simulate login validation
       if (email === "demo@localserve.com" && password === "password123") {
         console.log("Login successful:", { email, rememberMe })
+        // Use a default username or extract from email
+        const extractedUsername = username || email.split("@")[0]
+        if (onSuccess) {
+          onSuccess({ username: extractedUsername, email })
+        }
         setCurrentStep("success")
       } else {
         setError("Invalid email or password. Please try again.")
@@ -106,6 +113,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
     setCurrentStep("method")
     setEmail("")
     setPassword("")
+    setUsername("")
     setError("")
     setIsLoading(false)
     setRememberMe(false)
@@ -177,7 +185,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
                       />
                       <path
                         fill="#34A853"
-                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 8.55 7.7 23 12 23z"
                       />
                       <path
                         fill="#FBBC05"
@@ -215,7 +223,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
               {/* Demo Credentials */}
               <div className="mt-6 p-3 bg-blue-50 border border-blue-200 rounded-md">
                 <p className="text-sm text-blue-800 font-medium mb-1">Demo Credentials:</p>
-                <p className="text-xs text-blue-700">Email: demo@localserve.com</p>
+                <p className="text-xs text-blue-700">Username: demo / Email: demo@localserve.com</p>
                 <p className="text-xs text-blue-700">Password: password123</p>
               </div>
 
@@ -232,7 +240,20 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
           {currentStep === "email-login" && (
             <form onSubmit={handleEmailLogin} className="space-y-4">
               <div>
-                <Label htmlFor="email">Email Address</Label>
+                <Label htmlFor="username">Username or Email</Label>
+                <Input
+                  id="username"
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Enter your username or email"
+                  className="mt-1"
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="email">Email Address (optional if username provided)</Label>
                 <Input
                   id="email"
                   type="email"
@@ -240,7 +261,6 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="your.email@example.com"
                   className="mt-1"
-                  required
                 />
               </div>
 

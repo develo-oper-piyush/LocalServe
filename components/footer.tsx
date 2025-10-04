@@ -19,7 +19,7 @@ export function Footer() {
             </p>
             <div className="flex space-x-4">
               <a
-                href="https://piyushchaudhary.bio.link/"
+                href="https://piyushchaudhary.vercel.app/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="transition-transform duration-200 hover:scale-110"

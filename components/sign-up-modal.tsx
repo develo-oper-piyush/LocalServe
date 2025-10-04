@@ -11,16 +11,18 @@ import { X, Mail, Eye, EyeOff, CheckCircle, AlertCircle, Loader2 } from "lucide-
 interface SignUpModalProps {
   isOpen: boolean
   onClose: () => void
+  onSuccess?: (userData: { username: string; email: string }) => void
 }
 
 type SignUpStep = "method" | "email-form" | "otp-verification" | "success"
 
-export function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
+export function SignUpModal({ isOpen, onClose, onSuccess }: SignUpModalProps) {
   const [currentStep, setCurrentStep] = useState<SignUpStep>("method")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [fullName, setFullName] = useState("")
+  const [username, setUsername] = useState("") // Added username state
   const [otp, setOtp] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -53,6 +55,18 @@ export function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
     setError("")
 
     // Validation
+    if (!username.trim()) {
+      setError("Username is required")
+      setIsLoading(false)
+      return
+    }
+
+    if (username.length < 3) {
+      setError("Username must be at least 3 characters long")
+      setIsLoading(false)
+      return
+    }
+
     if (!fullName.trim()) {
       setError("Full name is required")
       setIsLoading(false)
@@ -107,6 +121,10 @@ export function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
       await new Promise((resolve) => setTimeout(resolve, 1500))
 
       console.log("OTP verified:", otp)
+      // Call onSuccess with user data
+      if (onSuccess) {
+        onSuccess({ username, email })
+      }
       setCurrentStep("success")
     } catch (err) {
       setError("Invalid verification code. Please try again.")
@@ -152,6 +170,7 @@ export function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
     setPassword("")
     setConfirmPassword("")
     setFullName("")
+    setUsername("") // Included username in resetModal
     setOtp("")
     setError("")
     setIsLoading(false)
@@ -272,6 +291,19 @@ export function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="Enter your full name"
+                  className="mt-1"
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="username">Username *</Label>
+                <Input
+                  id="username"
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Choose a username"
                   className="mt-1"
                   required
                 />
