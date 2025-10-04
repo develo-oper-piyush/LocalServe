@@ -1,23 +1,23 @@
 "use client"
 
-import { useState } from "react"
-
 import type React from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+
+import { useState } from "react"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Mail, Eye, EyeOff, CheckCircle, Loader2 } from "lucide-react"
 
 interface SignUpModalProps {
-  isOpen: boolean
-  onClose: () => void
+  open: boolean
+  onOpenChange: (open: boolean) => void
   onSuccess: (user: { username: string; email: string }) => void
 }
 
 type SignUpStep = "method" | "email-form" | "otp-verification" | "success"
 
-export function SignUpModal({ isOpen, onClose, onSuccess }: SignUpModalProps) {
+export function SignUpModal({ open, onOpenChange, onSuccess }: SignUpModalProps) {
   const [currentStep, setCurrentStep] = useState<SignUpStep>("method")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -179,7 +179,7 @@ export function SignUpModal({ isOpen, onClose, onSuccess }: SignUpModalProps) {
 
   const handleClose = () => {
     resetModal()
-    onClose()
+    onOpenChange(false)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -188,12 +188,17 @@ export function SignUpModal({ isOpen, onClose, onSuccess }: SignUpModalProps) {
 
     // Validation
     if (username.length < 3) {
-      setError("Username must be at least 3 characters long")
+      setError("Username must be at least 3 characters")
       return
     }
 
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters long")
+    if (!email.includes("@")) {
+      setError("Please enter a valid email")
+      return
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters")
       return
     }
 
@@ -204,16 +209,12 @@ export function SignUpModal({ isOpen, onClose, onSuccess }: SignUpModalProps) {
 
     setIsLoading(true)
 
-    // Simulate API call
+    // Simulate registration
     setTimeout(() => {
-      // Store authentication data
-      localStorage.setItem("isAuthenticated", "true")
-      localStorage.setItem("username", username)
-      localStorage.setItem("email", email)
-
-      onSuccess({ username, email })
-
-      // Reset form
+      onSuccess({
+        username,
+        email,
+      })
       setUsername("")
       setEmail("")
       setPassword("")
@@ -222,10 +223,10 @@ export function SignUpModal({ isOpen, onClose, onSuccess }: SignUpModalProps) {
     }, 1000)
   }
 
-  if (!isOpen) return null
+  if (!open) return null
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
+    <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-center">
@@ -234,6 +235,7 @@ export function SignUpModal({ isOpen, onClose, onSuccess }: SignUpModalProps) {
             {currentStep === "otp-verification" && "Verify Your Email"}
             {currentStep === "success" && "Welcome to LocalServe!"}
           </DialogTitle>
+          {currentStep === "method" && <DialogDescription>Create an account to get started</DialogDescription>}
         </DialogHeader>
         {/* Step 1: Choose Sign-up Method */}
         {currentStep === "method" && (
@@ -497,68 +499,6 @@ export function SignUpModal({ isOpen, onClose, onSuccess }: SignUpModalProps) {
               </Button>
             </div>
           </div>
-        )}
-
-        {/* Email Sign-up Form */}
-        {currentStep === "method" && (
-          <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-            <div className="space-y-2">
-              <Label htmlFor="signup-username">Username</Label>
-              <Input
-                id="signup-username"
-                type="text"
-                placeholder="Choose a username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-                minLength={3}
-              />
-              <p className="text-xs text-gray-500">At least 3 characters</p>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="signup-email">Email</Label>
-              <Input
-                id="signup-email"
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="signup-password">Password</Label>
-              <Input
-                id="signup-password"
-                type="password"
-                placeholder="Create a password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={8}
-              />
-              <p className="text-xs text-gray-500">At least 8 characters</p>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirm-password">Confirm Password</Label>
-              <Input
-                id="confirm-password"
-                type="password"
-                placeholder="Confirm your password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-              />
-            </div>
-            {error && <div className="text-sm text-red-600 bg-red-50 p-3 rounded-md">{error}</div>}
-            <Button
-              type="submit"
-              className="w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700"
-              disabled={isLoading}
-            >
-              {isLoading ? "Creating Account..." : "Sign Up"}
-            </Button>
-          </form>
         )}
       </DialogContent>
     </Dialog>
