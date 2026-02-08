@@ -3,6 +3,8 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { BookingProvider } from "@/contexts/booking-context"
+import { ThemeProvider } from "@/components/theme-provider"
+import { ThemeToggleFloating } from "@/components/theme-toggle"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -27,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <script
@@ -37,7 +39,12 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
-        <BookingProvider>{children}</BookingProvider>
+        <ThemeProvider>
+          <BookingProvider>
+            {children}
+            <ThemeToggleFloating />
+          </BookingProvider>
+        </ThemeProvider>
       </body>
     </html>
   )
