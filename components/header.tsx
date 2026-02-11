@@ -52,23 +52,23 @@ export function Header() {
 
   return (
     <>
-      <header className="border-b bg-white sticky top-0 z-50">
+      <header className="border-b bg-background text-foreground sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/" className="text-2xl font-bold text-primary">
             LocalServe
           </Link>
 
           <nav className="hidden md:flex space-x-6">
-            <Link href="/" className="text-gray-700 hover:text-primary transition-colors">
+            <Link href="/" className="text-foreground/70 hover:text-foreground transition-colors">
               Home
             </Link>
-            <Link href="/services" className="text-gray-700 hover:text-primary transition-colors">
+            <Link href="/services" className="text-foreground/70 hover:text-foreground transition-colors">
               Services
             </Link>
-            <Link href="/dashboard" className="text-gray-700 hover:text-primary transition-colors">
+            <Link href="/dashboard" className="text-foreground/70 hover:text-foreground transition-colors">
               Dashboard
             </Link>
-            <Link href="/provider/register" className="text-gray-700 hover:text-primary transition-colors">
+            <Link href="/provider/register" className="text-foreground/70 hover:text-foreground transition-colors">
               Become a Provider
             </Link>
           </nav>
@@ -76,8 +76,8 @@ export function Header() {
           <div className="hidden md:flex items-center space-x-4">
             {isAuthenticated ? (
               <div className="flex items-center space-x-3">
-                <div className="flex items-center space-x-2 px-3 py-2 bg-gray-100 rounded-lg">
-                  <User className="h-4 w-4 text-primary" />
+                <div className="flex items-center space-x-2 px-3 py-2 bg-secondary text-secondary-foreground rounded-lg">
+                  <User className="h-4 w-4" />
                   <span className="text-sm font-medium">Welcome back, {username}!</span>
                 </div>
                 <Button
@@ -102,7 +102,7 @@ export function Header() {
             )}
           </div>
 
-          <button className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Toggle menu">
+          <button className="md:hidden text-foreground" onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Toggle menu">
             {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
@@ -110,22 +110,22 @@ export function Header() {
         {isMenuOpen && (
           <div className="md:hidden border-t">
             <nav className="container mx-auto px-4 py-4 flex flex-col space-y-4">
-              <Link href="/" className="text-gray-700 hover:text-primary transition-colors">
+              <Link href="/" className="text-foreground/70 hover:text-foreground transition-colors">
                 Home
               </Link>
-              <Link href="/services" className="text-gray-700 hover:text-primary transition-colors">
+              <Link href="/services" className="text-foreground/70 hover:text-foreground transition-colors">
                 Services
               </Link>
-              <Link href="/dashboard" className="text-gray-700 hover:text-primary transition-colors">
+              <Link href="/dashboard" className="text-foreground/70 hover:text-foreground transition-colors">
                 Dashboard
               </Link>
-              <Link href="/provider/register" className="text-gray-700 hover:text-primary transition-colors">
+              <Link href="/provider/register" className="text-foreground/70 hover:text-foreground transition-colors">
                 Become a Provider
               </Link>
               {isAuthenticated ? (
                 <div className="flex flex-col space-y-2 pt-2 border-t">
-                  <div className="flex items-center space-x-2 px-3 py-2 bg-gray-100 rounded-lg">
-                    <User className="h-4 w-4 text-primary" />
+                  <div className="flex items-center space-x-2 px-3 py-2 bg-secondary text-secondary-foreground rounded-lg">
+                    <User className="h-4 w-4" />
                     <span className="text-sm font-medium">Welcome, {username}!</span>
                   </div>
                   <Button
